@@ -16,6 +16,7 @@ from Generator import Generator_Net
 from Discriminator import Discriminator_Net
 import imageio
 
+import math
 def get_args():
 
 	parser = argparse.ArgumentParser('Training DCGAN')
@@ -94,11 +95,25 @@ def get_args():
 
 	parser.add_argument('--begin_train',
 		type = bool,
-		default = True,
+		default = False,
 		help = 'start training')
+
+	parser.add_argument('--model_path',
+		type = str,
+		default = 'models/netG.pth',
+		help = 'path to generator model')
+
+	parser.add_argument('--make_grid',
+		type = bool,
+		default = True,
+		help = 'output grid or single img?')
+
+	parser.add_argument('--num_img',
+		type=int,
+		default = 64,
+		help = 'how many images you want the model to generate?')
+
 	args= parser.parse_args()
-
-
 
 	return args
 
@@ -251,16 +266,22 @@ def generate_img(args):
 	netG.load_state_dict(torch.load(args.model_path,
 	 					map_location =  lambda storage, loc: storage)
 						)
-	noise = torch.randn(64,args.nz, 1, 1, device = device)
-	out = netG(input_noise).detach().cpu()
-	img = vutils.make_grid(noise_tensor, padding=2, normalize=True)
-	imageio.imwrite('output_img/single_output.jpg')
+	noise = torch.randn(args.num_img,args.nz, 1, 1, device = 'cpu')
+	out = netG(noise).detach().cpu()
+	if args.make_grid:
+		img = vutils.make_grid(out, nrow=int(math.sqrt(args.num_img)), padding=2, normalize=True)
+		img = np.transpose(img,(1,2,0))
+		imageio.imwrite('output_img/single_output.jpg',img)
 
-
+	else:
+		print('generate single image')
+		for i in range(out.shape[0]):
+			img=np.transpose(out[-1,:,:,:],(1,2,0))
+			imageio.imwrite('output_img/single_outpu{}.jpg'.format(i),img)
 
 if __name__ == '__main__':
 	args = get_args()
-
+	print(args)
 	if args.begin_train:
 		train_model(args)
 	if args.generate_img:

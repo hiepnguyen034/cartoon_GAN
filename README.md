@@ -10,8 +10,8 @@ use `python train.py generate_img True` to generate image from random noise
 
 Noise:
 
-https://user-images.githubusercontent.com/29159878/83233879-96d84900-a1b9-11ea-9dd7-f3bb5ea893f3.jpg
+![img 1](https://user-images.githubusercontent.com/29159878/83233879-96d84900-a1b9-11ea-9dd7-f3bb5ea893f3.jpg)
 
 Generated output:
 
-https://user-images.githubusercontent.com/29159878/83233900-9b9cfd00-a1b9-11ea-94eb-886e7ea1fb83.jpg
+![img2](https://user-images.githubusercontent.com/29159878/83233900-9b9cfd00-a1b9-11ea-94eb-886e7ea1fb83.jpg)
