@@ -62,7 +62,7 @@ def get_args():
 
 	parser.add_argument('--num_epochs',
 		type = int,
-		default = 5,
+		default = 20,
 		help = 'number of epoches')
 
 	parser.add_argument('--lr',
@@ -87,7 +87,18 @@ def get_args():
 		default = 64,
 		help='num batch_size')
 
+	parser.add_argument('--generate_img', 
+		type = bool, 
+		default =False, 
+		help = 'generate img')
+
+	parser.add_argument('--begin_train',
+		type = bool,
+		default = True,
+		help = 'start training')
 	args= parser.parse_args()
+
+
 
 	return args
 
@@ -109,11 +120,11 @@ def get_device(cuda):
 def get_imgloader(img_path):
 	data = dset.ImageFolder(root = img_path,
 							transform= transforms.Compose([
-								transforms.Resize(args.img_size),
-								transforms.CenterCrop(args.img_size),
-								transforms.ToTensor(),
-								transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5))
-								]))
+							transforms.Resize(args.img_size),
+							transforms.CenterCrop(args.img_size),
+							transforms.ToTensor(),
+							transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5))
+							]))
 	img_loader = torch.utils.data.DataLoader(data, batch_size = args.batch_size,
 											shuffle=True, num_workers=args.workers)
 
@@ -149,7 +160,6 @@ def train_model(args):
 
 		for i, data in enumerate(img_loader, 0):
 			#Calculate & backward loss D: maximize log(D(x)) + log(1 - D(G(z)))
-			netD.zero_grad()
 			real_cpu = data[0].to(device)
 
 			b_size = real_cpu.size(0)
@@ -176,9 +186,9 @@ def train_model(args):
 			lossD = lossD_real + lossD_fake
 
 			opt_D.step()
+			netD.zero_grad()
 
 			#Calculate & backward loss G: maximize log(D(G(z)))
-			netG.zero_grad()
 			label.fill_(real_label)
 			output=netD(fake).view(-1)
 
@@ -188,6 +198,7 @@ def train_model(args):
 			D_G_z2 = output.mean().item()
 
 			opt_G.step()
+			netG.zero_grad()
 		# Output training stats
 				
 
@@ -229,9 +240,34 @@ def train_model(args):
 	for i, img in enumerate(img_list):
 		pic = np.transpose(img,(1,2,0))
 		plt.imshow(pic)
-		imageio.imwrite('image_{}.jpg'.format(i), pic)
+		imageio.imwrite('output_img/image_{}.jpg'.format(i), pic)
+
+	torch.save(netG.state_dict(), 'netG.pth')
+	torch.save(netD.state_dict(),'netD.pth')
+
+
+def generate_img(args):
+	netG = Generator_Net(args.nz,args.ngf,args.nc)
+	netG.load_state_dict(torch.load(args.model_path,
+	 					map_location =  lambda storage, loc: storage)
+						)
+	noise = torch.randn(64,args.nz, 1, 1, device = device)
+	out = netG(input_noise).detach().cpu()
+	img = vutils.make_grid(noise_tensor, padding=2, normalize=True)
+	imageio.imwrite('output_img/single_output.jpg')
+
 
 
 if __name__ == '__main__':
 	args = get_args()
-	train_model(args)
+
+	if args.begin_train:
+		train_model(args)
+	if args.generate_img:
+		generate_img(args)
+
+
+
+
+
+
