@@ -20,6 +20,6 @@ Generated output:
 
 You should be able to build a grid of whatever size you configure.
 
-An example of grid size =3,(`num_img=9`):
+An example of grid size =3, which means running (`python run.py --generate_img True --num_img 9`):
 
 ![single_output](https://user-images.githubusercontent.com/29159878/83252126-e8da9800-a1d4-11ea-9199-ecdcc943bc36.jpg)
