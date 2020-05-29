@@ -2,9 +2,11 @@ This is a simple DCGAN network that generates cartoon faces. The code from this 
 
 While the dataset used in this repos is cartoon faces, the code can pretty much all kinds of images.
 
-use `python train.py --img_path=[PATH to training images directory`
+use `python train.py --img_path=[PATH to training images directory]` to train model
 
-use `python train.py generate_img True` to generate image from random noise 
+use `python train.py --generate_img True` to generate image from random noise 
+
+For more options, see `train.py`
 
 # Example:
 
