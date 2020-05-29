@@ -105,7 +105,7 @@ def get_args():
 
 	parser.add_argument('--make_grid',
 		type = bool,
-		default = False,
+		default = True,
 		help = 'output grid or single img?')
 
 	parser.add_argument('--num_img',
