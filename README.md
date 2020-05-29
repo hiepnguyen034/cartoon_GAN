@@ -2,6 +2,8 @@ This is a simple DCGAN network that generates cartoon faces. The code from this 
 
 While the dataset used in this repos is cartoon faces, the code can pretty much generate all kinds of images.
 
+to get started, do `pip install -r requirements.txt`
+
 use `python run.py --begin_training True --img_path [PATH to training images directory]` to train model
 
 use `python run.py --generate_img True --num_img [number of images]` to generate image(s) from random noise 
